@@ -1,0 +1,12 @@
+<% if @results %>
+  <% if @count > 0 %>
+  window.create_alert({header: "Syncronization finished!",
+    message: '<p>Coins added: <%= @coins.join(", ")%>, total history records: <%= @count %>. <%= link_to "Check it out!", trades_path %></p>'}, "success");
+  <% else %>
+  window.create_alert({header: "Already up-to-date.",
+    message: "<p>There are no new history records.</p>"}, "warning");
+  <% end %>
+<% else %>
+window.create_alert({header: "Syncronization failed.",
+  message: "Can't connect to exhange."});
+<% end %>

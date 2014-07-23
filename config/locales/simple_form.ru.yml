@@ -1,0 +1,43 @@
+ru:
+  simple_form:
+    "yes": 'Yes'
+    "no": 'No'
+    required:
+      text: 'required'
+      mark: ''
+      # You can uncomment the line below if you need to overwrite the whole required html.
+      # When using html, text and mark won't be used.
+      # html: '<abbr title="required">*</abbr>'
+    error_notification:
+      default_message: '<a class="close" data-dismiss="alert">&times;</a>Некоторые поля заполнены неверно:'
+    labels:
+      user:
+        new:
+          username: 'Логин'
+          email: 'Электронная почта'
+          password: 'Пароль'
+          password_confirmation: 'Подтверждение'
+          full_name: 'ФИО'
+          warface_nick: 'Ник в Warface'
+          country: 'Страна'
+          city: 'Город'
+          skype: 'Ник в скайпе'
+          vk_profile: 'Профиль ВКонтакте'
+          phone: "Телефон"
+          server: "Сервер"
+      ip_ban:
+        new:
+          reason: Причина
+      
+
+    # labels:
+    #   password: 'Password'
+    #   user:
+    #     new:
+    #       email: 'E-mail para efetuar o sign in.'
+    #     edit:
+    #       email: 'E-mail.'
+    # hints:
+    #   username: 'User name to sign in.'
+    #   password: 'No special characters, please.'
+

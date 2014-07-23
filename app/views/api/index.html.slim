@@ -1,0 +1,27 @@
+- if @api.any?
+  h1 Your API keys
+  .table-responsive
+    table.table.table-striped.table-bordered.table-hover
+      thead
+        tr
+          th Exchange
+          th Name
+          th Key
+          th Id api
+          th
+      tbody
+        - @api.each do | api |
+          tr
+            td = api.exchange.name
+            td = api.name
+            td = api.key
+            td = api.secret
+            td.text-cnt
+              .btn-group
+                / = link_to glyph('refresh')+' Sync', sync_api_path(api), class: "btn btn-success", method: 'post'
+                = link_to fa_icon("refresh", text: "Sync"), sync_api_path(api), class: "btn btn-success", method: 'post', remote: true
+                = link_to glyph('pencil')+' Edit', edit_api_path(api), class: "btn btn-primary"
+                = link_destroy(api)
+- else
+  h1.text-cnt You have no API keys.
+  p.text-cnt = link_to "Add new API keys", new_api_path, class: "btn btn-primary btn-lg"

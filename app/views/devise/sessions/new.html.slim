@@ -1,0 +1,13 @@
+.col-md-4.col-md-offset-4
+  h2.text-cnt = "Registration"
+  = simple_form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f|
+    = f.input :username
+    = f.input :password
+    /= f.input :remember_me, as: :boolean, wrap: :checkbox, inline_label: "Remember me", label: false
+    = f.input :remember_me, as: :boolean, wrapper: :vertical_boolean, wrapper_html: {class: "pull-left"}
+    .form-group = f.button :submit, t("sign_in"), :class => "btn btn-primary pull-right"
+    .clearfix
+    /= f.button :submit, "Войти", :class => "btn btn-primary"
+    .form-group.pull-right
+        = link_to t("buttons.recover_password"), new_password_path(resource_name), :class => "btn btn-success mr1"
+        = link_to t("sign_up"), new_user_registration_path, :class => 'btn btn-primary'

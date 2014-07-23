@@ -1,0 +1,8 @@
+.col-xs-12.pull-left
+  = link_to trades_path, :class => 'btn btn-default' do
+    = glyph 'arrow-left'
+    |  Back 
+
+.col-md-4.col-md-offset-4
+  h1.text-cnt Edit order
+  = render 'form'

@@ -1,0 +1,110 @@
+ru:
+  sign_in: Войти
+  sign_up: Регистрация
+
+
+
+
+  status:
+    active: Активен
+    playing: В игре
+    banned: Забанен
+    timebanned: Временно забанен
+  comments:
+    zero: "Нет комментариев"
+    one: "1 комментарий"
+    few: "%{count} комментария"
+    many: "%{count} комментариев"
+  topics:
+    zero: "Нет тем"
+    one: "1 тема"
+    few: "%{count} темы"
+    many: "%{count} тем"
+  activerecord:
+    errors:
+      models:
+        ip_ban:
+          attributes:
+            ip:
+              invalid: должен быть вида 111.222.333.444
+        clan_user:
+          attributes:
+            group_id:
+              inclusion: может принимать значения от 1 до 9
+        clan:
+          attributes:
+            name:
+              invalid: может содержать только русские/английские буквы и цифры
+            tag:
+              invalid: может содержать только русские/английские буквы
+
+    models:
+      user: Пользователь
+      article: Новость
+      stat: Статистика
+      platform: Платформа
+      game_queue: Очередь
+      ingame: Игроки
+      game: Игра
+      comment: Комментарий
+      party: Группа
+      level: Звание
+    attributes:
+      user:
+        username: Логин
+        email: Электронная почта
+        password: Пароль
+        password_confirmation: Подтверждение
+        current_password: Текущий пароль
+        full_name: 'ФИО'
+        warface_nick: 'Ник в Warface'
+        country: 'Страна'
+        city: 'Город'
+        skype: 'Ник в скайпе'
+        vk_profile: 'Профиль ВКонтакте'
+        phone: Телефон
+        server: "Сервер"
+      article:
+        title: Заголовок
+        body: Текст
+        views: Просмотров
+        comments_enabled: Комментирование
+      clan:
+        name: 'Название клана'
+        tag: 'Тэг клана'
+        server: Сервер
+      clan_user:
+        group_id: Команда
+      ip_ban:
+        ip: IP Адрес
+        reason: Причина
+        expired_at: Срок бана
+      level:
+        name: "Название"
+        pos: Уровень
+        pos_required: Требуемый уровень
+        price: Стоимость
+        exp_win: Очки за победу
+        exp_loss: Очки за поражение
+        money_win: Деньги за победу
+        money_loss: Деньги за поражение
+  time:
+    today: Сегодня
+    yesterday: Вчера
+    at: в
+  views:
+    pagination:
+      first: "&laquo; Первая"
+      last: "Последняя &raquo;"
+      previous: "&lsaquo; Назад"
+      next: "Вперед &rsaquo;"
+      truncate: "..."
+
+
+  unauthorized:
+    default_message: "К сожалению, у вас нет доступа к этой странице или действию =("
+    manage:
+      news: "У вас нет доступа на управление новостями."
+      all: "У вас нет доступа на это действие."
+    clan_join:
+      game: "Вы не являетесь офицером, или же в вашей команде нет 5 человек"

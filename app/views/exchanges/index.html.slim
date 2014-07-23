@@ -1,0 +1,25 @@
+.page-header
+  = link_to new_exchange_path, :class => 'btn btn-primary' do 
+    span.glyphicon.glyphicon-plus
+    |  New Exchange
+  h1
+    | Listing exchanges
+
+.table-responsive
+  table.table.table-striped.table-bordered.table-hover
+    thead
+      tr
+        th Name
+        th Short name
+        th Url
+        th
+    tbody
+      - @exchanges.each do | exchange |
+        tr
+          td = exchange.name
+          td = exchange.short_name
+          td = exchange.url
+          td.text-cnt
+            .btn-group
+              = link_to 'Edit', edit_exchange_path(exchange), class: "btn btn-primary"
+              = link_to 'Destroy', exchange, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger"

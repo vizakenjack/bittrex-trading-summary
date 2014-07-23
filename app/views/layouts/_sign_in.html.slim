@@ -1,0 +1,25 @@
+li.dropdown
+  a.dropdown-toggle href="#" data-toggle="dropdown"
+    - if signed_in?
+      /i.icon-user.icon-white
+      = glyph :user, :white
+      |  
+      = current_user.username
+    - else
+      = t 'sign_up'
+    i.caret
+  ul.dropdown-menu.login-form
+    - if signed_in?
+      li = link_to t('buttons.profile'), '#', data: {confirm: "Not ready yet. Click this later."}
+      li = link_to t('sign_out'), main_app.destroy_user_session_path, :method => :delete
+    - else
+      = simple_form_for(resource, :as => resource_name, :url => session_path(resource_name), :remote => false, :html => {:class => "form-condensed"}) do |f|
+        = f.input :username, :label => false, :placeholder => h(t("activerecord.attributes.user.username"))
+        = f.input :password, :label => false, :placeholder => h(t("activerecord.attributes.user.password"))
+        = f.input :remember_me, as: :boolean, wrapper: :vertical_boolean, wrapper_html: {class: "pull-left"}
+        = f.button :submit, t("sign_in"), :class => "btn btn-primary pull-right"
+
+
+        
+        = link_to "Forgot password?", new_password_path(resource_name), :class => "restore-password btn wide btn-primary", :style => "display: none"
+        .form-group = link_to 'Sign up', new_user_registration_path, :class => 'btn btn-primary wide'

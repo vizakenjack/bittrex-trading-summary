@@ -1,0 +1,14 @@
+.page-header
+  = link_to orders_histories_path, :class => 'btn btn-default' do 
+    span.glyphicon.glyphicon-list-alt
+    |  Back 
+  h1
+    | New 
+    | orders_history
+
+.row
+  .col-md-4.col-md-offset-4
+    = simple_form_for(@orders_history, :html => { :class => 'form-vertical' }) do |f|
+      = f.association :exchange, include_blank: false
+      = f.association :coin, label: "Market pair:", include_blank: false
+      = f.submit 'Добавить', :class => 'btn btn-primary'

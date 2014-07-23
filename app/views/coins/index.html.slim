@@ -1,0 +1,46 @@
+.page-header
+  = link_to new_coin_path, :class => 'btn btn-primary' do 
+    span.glyphicon.glyphicon-plus
+    |  New Coin
+  h1
+    | Listing coins
+
+    
+= link_to "Load", load_coins_path, method: "post", class: 'btn btn-primary'
+= link_to "Delete all", delete_coins_path, method: 'delete', class: 'btn btn-danger'
+.table-responsive
+  table.table.table-striped.table-bordered.table-hover
+    thead
+      tr
+        th
+          | Name
+        th
+          | Tag
+        th
+          | Thread
+        th
+          | Current price
+        th
+          | Current volume
+        th
+        th
+        th
+    tbody
+      - @coins.each do | coin |
+        tr
+          td
+            = coin.name
+          td
+            = coin.tag
+          td
+            = coin.thread
+          td
+            = price_format coin.current_price
+          td
+            = price_format coin.current_volume
+          td
+            = link_to 'Show', coin
+          td
+            = link_to 'Edit', edit_coin_path(coin) 
+          td
+            = link_to 'Destroy', coin, method: :delete, data: { confirm: 'Are you sure?' } 

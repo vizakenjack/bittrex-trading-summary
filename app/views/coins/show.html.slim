@@ -1,0 +1,30 @@
+.page-header
+  = link_to coins_path, :class => 'btn btn-default' do 
+    span.glyphicon.glyphicon-list-alt
+    |  Back 
+  = link_to edit_coin_path(@coin), :class => 'btn btn-primary' do 
+    span.glyphicon.glyphicon-pencil
+    |  Edit 
+  h1
+    | Show coin
+dl.dl-horizontal
+  dt
+    | Name:
+  dd
+    = @coin.name
+  dt
+    | Tag:
+  dd
+    = @coin.tag
+  dt
+    | Thread:
+  dd
+    = @coin.thread
+  dt
+    | Current price:
+  dd
+    = @coin.current_price
+  dt
+    | Current volume:
+  dd
+    = @coin.current_volume

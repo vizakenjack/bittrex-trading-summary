@@ -1,0 +1,34 @@
+.page-header
+  = link_to orders_histories_path, :class => 'btn btn-default' do 
+    span.glyphicon.glyphicon-list-alt
+    |  Back 
+  = link_to edit_orders_history_path(@orders_history), :class => 'btn btn-primary' do 
+    span.glyphicon.glyphicon-pencil
+    |  Edit 
+  h1
+    | Show orders_history
+dl.dl-horizontal
+  dt
+    | User:
+  dd
+    = @orders_history.user
+  dt
+    | Coin:
+  dd
+    = @orders_history.coin
+  dt
+    | Exchange:
+  dd
+    = @orders_history.exchange
+  dt
+    | Order type:
+  dd
+    = @orders_history.order_type
+  dt
+    | Amount:
+  dd
+    = @orders_history.amount
+  dt
+    | Price:
+  dd
+    = @orders_history.price

@@ -1,0 +1,17 @@
+#modal-import-history.modal.fade
+  .modal-dialog
+    .modal-content
+      = simple_form_for(@orders_history, url: trades_path, :html => { :class => 'form-vertical' }) do |f|
+        .modal-header
+          button.close data-dismiss="modal" type="button" 
+            span aria-hidden="true"  &times;
+            span.sr-only Close
+          h4.modal-title Import history from exchange
+        .modal-body.row
+          .col-md-6.col-md-offset-3
+              = f.association :coin, include_blank: false
+              = f.association :exchange, include_blank: false
+              = f.input :api_id, collection: @api.to_a, include_blank: false, label_method: lambda { |e| e.name }, wrapper_html: {class: "#{'hidden'  if @api.size == 1} "}
+        .modal-footer
+          button.btn.btn-default data-dismiss="modal" type="button"  Close
+          = f.submit 'Add', :class => 'btn btn-primary'

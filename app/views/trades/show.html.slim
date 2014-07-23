@@ -1,0 +1,34 @@
+.col-xs-12.pull-left
+  = link_to trades_path, :class => 'btn btn-default' do
+    = glyph 'arrow-left'
+    |  Back 
+br
+br
+h1 Trade details
+.table-responsive
+  table.table.table-striped.table-bordered.table-hover
+    thead
+      tr
+        th Coin
+        th Date
+        th Exchange
+        th Order type
+        th Amount
+        th Price
+        th Total BTC
+        th Manage
+    tbody
+      - @orders_histories.each do | orders_history |
+        tr
+          td = orders_history.coin.tag
+          td = orders_history.created_at.strftime("%d.%m.%y %H:%M:%S")
+          td = orders_history.exchange.name
+          td = orders_history.order_type
+          td = price_format orders_history.amount
+          td = price_format orders_history.price
+          td = price_format (orders_history.amount * orders_history.price)
+          td
+            .btn-group
+              - html_class = " disabled" if cannot? :edit, orders_history
+              = link_to glyph('pencil') + " Edit", edit_orders_history_path(orders_history), class: "btn btn-mini btn-success#{html_class}"
+              = link_to glyph('remove-sign') + ' Destroy', orders_history_path(orders_history), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-mini btn-danger#{html_class}"

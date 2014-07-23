@@ -1,0 +1,34 @@
+.btn-group.pull-right
+  = link_to new_orders_history_path, :class => 'btn btn-primary' do 
+    span.glyphicon.glyphicon-plus
+    |  Add manually
+  = link_to load_orders_histories_path, :class => 'btn btn-primary' do 
+    span.glyphicon.glyphicon-plus
+    |  Add from exchange
+
+h1 Listing orders_histories
+
+.table-responsive
+  table.table.table-striped.table-bordered.table-hover
+    thead
+      tr
+        th Coin
+        th Exchange
+        th Order type
+        th Amount
+        th Price
+        th Total BTC
+        th Manage
+    tbody
+      - @orders_histories.each do | orders_history |
+        tr
+          td = orders_history.coin.tag
+          td = orders_history.exchange.name
+          td = orders_history.order_type
+          td = price_format orders_history.amount
+          td = price_format orders_history.price
+          td = price_format (orders_history.amount * orders_history.price)
+          td
+            .btn-group
+              = link_to 'Edit', edit_orders_history_path(orders_history, username: current_user.username || @default_username), class: "btn btn-mini btn-success"
+              = link_to 'Destroy', orders_history_path(orders_history, username: current_user.username || @default_username), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-mini btn-danger"

@@ -1,0 +1,22 @@
+# Ignore bundler config
+/.bundle
+
+/myproc.rb.pid
+/public/favicon.ico
+
+# Ignore the default SQLite database.
+/db/*.sqlite3
+/db/schema.rb
+
+/public/system
+/public/uploads
+/public/assets
+
+/config/database.yml
+/environments/development.rb
+
+# Ignore all logfiles and tempfiles.
+.DS_Store
+/log/*.log
+/tmp
+/public/assets

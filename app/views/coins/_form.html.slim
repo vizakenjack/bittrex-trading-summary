@@ -1,0 +1,26 @@
+= form_for(@coin, :html => { :class => "form-horizontal" }) do |f|
+  - if @coin.errors.any?
+    .alert.alert-danger.alert-dismissable
+      button.close type="button" data-dismiss="alert" aria-hidden="true" 
+        | &times;
+      h4= "#{pluralize(@coin.errors.count,"error")} prohibited this coin from being saved:"
+      ul
+        - @coin.errors.full_messages.each do |msg|
+          li= msg
+  = f.label :name, :class => "col-sm-2 control-label"
+    .col-sm-10
+      = f.text_field :name, :class => "form-control"
+  = f.label :tag, :class => "col-sm-2 control-label"
+    .col-sm-10
+      = f.text_field :tag, :class => "form-control"
+  = f.label :thread, :class => "col-sm-2 control-label"
+    .col-sm-10
+      = f.text_field :thread, :class => "form-control"
+  = f.label :current_price, :class => "col-sm-2 control-label"
+    .col-sm-10
+      = f.text_field :current_price, :class => "form-control"
+  = f.label :current_volume, :class => "col-sm-2 control-label"
+    .col-sm-10
+      = f.text_field :current_volume, :class => "form-control"
+  .col-sm-offset-2.col-sm-10
+      = f.submit :class => "btn btn-primary"

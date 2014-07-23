@@ -1,0 +1,8 @@
+= simple_form_for(@orders_history, url: orders_history_path, :html => { :class => 'form-vertical' }) do |f|
+  - if @orders_history.new_record?
+    = f.association :coin, include_blank: false
+  = f.association :exchange, include_blank: false
+  = f.input :order_type, include_blank: false
+  = f.input :amount
+  = f.input :price
+  = f.submit 'Submit', :class => 'btn btn-primary'

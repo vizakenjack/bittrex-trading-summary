@@ -1,0 +1,5 @@
+= simple_form_for(@exchange, html: {class: "form-horizontal"}) do |f|
+  = f.input :name, wrapper: :horizontal_form
+  = f.input :short_name, wrapper: :horizontal_form
+  = f.input :url, wrapper: :horizontal_form
+  = f.submit :class => "btn btn-primary pull-right"

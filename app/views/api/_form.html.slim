@@ -1,0 +1,6 @@
+= simple_form_for(@api, html: {class: "form-horizontal"}) do |f|
+  = f.association :exchange, include_blank: false, wrapper: :horizontal_form
+  = f.input :name, wrapper: :horizontal_form
+  = f.input :key, wrapper: :horizontal_form
+  = f.input :secret, wrapper: :horizontal_form
+  = f.submit :class => "btn btn-primary pull-right"
