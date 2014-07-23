@@ -15,7 +15,7 @@ class TradesController < ApplicationController
   # GET /trades/1.json
   def show
     authorize! :read, Trade
-    @orders_histories = @trade.orders_histories.order("created_at DESC")
+    @orders_histories = @trade.orders_histories.includes(:exchange, :coin).order("created_at DESC")
   end
 
   # GET /trades/new
