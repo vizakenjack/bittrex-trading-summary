@@ -61,7 +61,7 @@ task :deploy => :environment do
     invoke :'deploy:cleanup'
 
     to :launch do
-      queue 'bundle exec thin restart -C trading.yml'
+      # queue 'bundle exec thin restart -C trading.yml'
     end
   end
 end

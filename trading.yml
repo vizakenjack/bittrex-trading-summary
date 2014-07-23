@@ -1,0 +1,14 @@
+---
+chdir: /var/www/trading/current
+environment: production
+timeout: 30
+log: /var/www/trading/log/thin.log
+pid: /var/www/trading/tmp/pids/thin.pid
+max_conns: 1024
+max_persistent_conns: 512
+require: []
+
+wait: 30
+servers: 1
+socket: /tmp/thin-trade.sock
+daemonize: true
