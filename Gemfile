@@ -6,6 +6,7 @@ gem 'pg'
 # gem 'sass-rails', '~> 4.0.3'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.0.0'
+gem 'libv8', :platform => :ruby
 gem 'therubyracer',  platforms: :ruby
 gem 'thin'
 
@@ -47,7 +48,6 @@ gem "recaptcha", :require => "recaptcha/rails"
 #gem "breadcrumbs_on_rails"
 #gem "crummy"
 #gem 'draper', '0.18.0'
-gem 'quiet_assets'
 #gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git'
 gem 'less-rails-bootstrap'
 # gem 'bootstrap-generators', :git => 'git://github.com/decioferreira/bootstrap-generators.git'

@@ -17,7 +17,7 @@ html lang="ru"
     .container
       .header
         ul.nav.nav-pills.pull-right
-          li class=css_nav_item("trades") = link_to t("controllers.trades"), trades_path(username: current_user.try(:username))
+          li class=css_nav_item("trades") = link_to t("controllers.trades"), trades_path(username: (current_user.try(:username) if signed_in?)
           / li class=css_nav_item("orders_histories") = link_to t("controllers.orders_histories"), orders_histories_path
           - if can? :manage, Coin
             li class=css_nav_item("coins") = link_to t("controllers.coins"), coins_path

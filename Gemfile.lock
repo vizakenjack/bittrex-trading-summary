@@ -250,6 +250,7 @@ DEPENDENCIES
   kaminari
   less-rails
   less-rails-bootstrap
+  libv8
   paperclip (~> 3.0)
   paranoia (~> 2.0)
   pg
