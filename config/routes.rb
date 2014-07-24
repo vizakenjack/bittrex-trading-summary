@@ -8,7 +8,9 @@ Rails.application.routes.draw do
   resources :orders_histories, only: [:edit, :update, :destroy]
 
   scope '(:username)' do
-    resources :trades
+    resources :trades do
+      get 'debug', on: :collection
+    end
   end
 
   resources :coins do

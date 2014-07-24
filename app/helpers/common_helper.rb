@@ -30,7 +30,7 @@ module CommonHelper
   end
 
   def title(page_title, options={})
-    @title ||= Sanitize.clean(page_title.to_s)
+    @page_title ||= Sanitize.clean(page_title.to_s)
     return page_title
   end
 

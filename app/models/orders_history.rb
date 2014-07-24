@@ -1,20 +1,13 @@
 class OrdersHistory < ActiveRecord::Base
+  acts_as_paranoid
+
   belongs_to :user
   belongs_to :coin
   belongs_to :exchange
   belongs_to :trade
 
   attr_accessor :api_id
-  acts_as_paranoid
 
-  # t.references :user, index: true, null: false
-  # t.references :coin, index: true, null: false
-  # t.references :exchange, index: true, null: false
-  # t.integer :order_type, null: false, default: 0
-  # t.float :amount, null: false, default: 0.0
-  # t.float :price, null: false, default: 0.0
-  # uuid
-  # total amount
   enum order_type: ['Sell', 'Buy']
   enum added_by: ['Manual', 'API']
 

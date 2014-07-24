@@ -40,8 +40,8 @@ class OrdersHistoriesController < ApplicationController
   def update
     respond_to do |format|
       if @orders_history.update(orders_history_params)
-        format.html { redirect_to trades_path(username: current_user.username || @default_username), notice: 'Orders history was successfully updated.' }
-        format.json { render :show, status: :ok, location: trades_path(username: current_user.username || @default_username) }
+        format.html { redirect_to trades_path(username: params[:username] || current_user.username), notice: 'Orders history was successfully updated.' }
+        format.json { render :show, status: :ok, location: trades_path(username: params[:username] || current_user.username) }
       else
         format.html { render :edit }
         format.json { render json: @orders_history.errors, status: :unprocessable_entity }

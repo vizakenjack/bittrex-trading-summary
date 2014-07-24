@@ -12,6 +12,12 @@ class TradesController < ApplicationController
     @api = current_user.api  if signed_in?
   end
 
+  def debug
+    api = current_user.api.first
+    trx = Bittrex.new(api.key, api.secret)
+    @history = trx.order_history(params[:coin], 500)
+  end
+
   # GET /trades/1
   # GET /trades/1.json
   def show
