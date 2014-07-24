@@ -21,15 +21,13 @@ class Bittrex
     begin
       nonce = Time.now.to_i
       url = "#{url}?apikey=#{@api_key}&nonce=#{nonce}&"+params
-      # url = "https://bittrex.com/api/v1.1/market/getopenorders?apikey=#{@api_key}&nonce=#{nonce}"
       sign = OpenSSL::HMAC.hexdigest(digest = OpenSSL::Digest.new('sha512'), @api_secret, url)
-      # xurl = Addressable::URI.parse(url).normalize.to_str
-      p "sign = #{sign}, url = #{url}"
       response = JSON.parse(RestClient.get(url, {'apisign' => sign}))
       if response['success']
         response['result']
       else
-        puts "Reqeust failed: #{response}"
+        puts "Request failed: #{response}"
+        return response['message']
       end
     rescue
       return false

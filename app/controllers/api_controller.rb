@@ -23,13 +23,13 @@ class ApiController < ApplicationController
     respond_to do |format|
       format.html { redirect_to trades_path, notice: "Successfully synchronized." }
       format.js {
-        if @results
+        if @results and @results != "APIKEY_INVALID"
           @count = 0
           if success = @results.select { |e| e[:status] == :success }
             @coins = success.collect { |e| e[:coin_name] }
             @count = success.inject(0){|a,b| a + b[:message]}
           end
-          @errors = @results.select { |e| e[:status] == :error }.collect { |e| e[:message] } 
+          @errors = @results.select { |e| e[:status] == :error }.collect { |e| e[:message] }
         end
       }
     end
