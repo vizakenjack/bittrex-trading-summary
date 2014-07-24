@@ -9,7 +9,7 @@ class TradesController < ApplicationController
     @orders_history = OrdersHistory.new
     user =  params[:username].present? ? User.find_by(username: params[:username]) : current_user
     @trades = user.trades.includes(:coin, :user).order("last_trade DESC").all
-    @api = current_user.api
+    @api = current_user.api  if signed_in?
   end
 
   # GET /trades/1

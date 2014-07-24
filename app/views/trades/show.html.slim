@@ -4,12 +4,12 @@
     |  Back 
 br
 br
-h1 Trade details
+h1 = "Trade details of user #{params[:username] || current_user.try(:username)}"
 .table-responsive
   table.table.table-striped.table-bordered.table-hover
     thead
       tr
-        th User
+        /th User
         th Coin
         th Date
         th Exchange
@@ -21,7 +21,7 @@ h1 Trade details
     tbody
       - @orders_histories.each do | orders_history |
         tr
-          td = orders_history.user.username
+          /td = orders_history.user.username
           td = orders_history.coin.tag
           td = orders_history.created_at.strftime("%d.%m.%y %H:%M:%S")
           td = orders_history.exchange.name

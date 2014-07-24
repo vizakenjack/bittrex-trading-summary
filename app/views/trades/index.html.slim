@@ -1,19 +1,20 @@
-.btn-group.pull-right
-  button class="btn btn-primary" data-toggle="modal" data-target="#modal-manual-history" 
-    span.glyphicon.glyphicon-pencil
-    |  Add manually
-  button class="btn btn-primary" data-toggle="modal" data-target="#modal-import-history" 
-    span.glyphicon.glyphicon-cloud-download
-    |  Import from exchange
+- if can? :create, Trade
+  .btn-group.pull-right
+    button class="btn btn-primary" data-toggle="modal" data-target="#modal-manual-history" 
+      span.glyphicon.glyphicon-pencil
+      |  Add manually
+    button class="btn btn-primary" data-toggle="modal" data-target="#modal-import-history" 
+      span.glyphicon.glyphicon-cloud-download
+      |  Import from exchange
 
 
-h1 Listing trades
+h1 = "Listing trades of user #{params[:username] || current_user.try(:username)}"
 
 .table-responsive
   table#trades-table.table.table-striped.table-bordered
     thead
       tr
-        th User
+        /th User
         th Coin
         th.text-center Stats
         th
@@ -21,7 +22,7 @@ h1 Listing trades
     tbody
       - @trades.each do | trade |
         tr data-trade-id=trade.id
-          td = trade.user.username
+          /td = trade.user.username
           td 
             p = trade.coin.name
             p 
@@ -57,7 +58,7 @@ h1 Listing trades
           td.text-cnt: .btn-group
               = link_show(trade)
               / = link_to 'Edit', edit_trade_path(trade), class: "btn btn-md btn-primary"
-              = link_destroy(trade, remote: true)
-
-= render 'import'
-= render 'manual'
+              = link_destroy(trade, remote: true)  if can? :destroy, trade
+- if can? :create, Trade
+  = render 'import'
+  = render 'manual'
