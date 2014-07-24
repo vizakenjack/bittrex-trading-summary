@@ -7,7 +7,8 @@ class TradesController < ApplicationController
   def index
     authorize! :read, Trade
     @orders_history = OrdersHistory.new
-    @trades = current_user.trades.includes(:coin).order("last_trade DESC").all
+    user =  params[:username].present? ? User.find_by(username: params[:username]) : current_user
+    @trades = user.trades.includes(:coin).order("last_trade DESC").all
     @api = current_user.api
   end
 
