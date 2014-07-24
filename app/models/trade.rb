@@ -22,7 +22,7 @@ class Trade < ActiveRecord::Base
     self.average_price_sold = self.price_sold / self.amount_sold  if self.amount_sold > 0
     self.average_price_bought = self.price_bought / self.amount_bought  if self.amount_bought > 0
     self.amount_left = self.amount_bought - self.amount_sold
-    self.amount_left = 0  if self.amount_left < 0
+    self.amount_left = 0  if self.amount_left < 0.001
     self.amount_value = self.amount_left * self.average_price_bought
     self.profit = self.price_sold - self.price_bought
     self.percent = self.price_bought == 0 ? 100.0 : (self.price_sold / self.price_bought) * 100
