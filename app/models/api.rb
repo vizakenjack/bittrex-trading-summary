@@ -4,8 +4,8 @@ class Api < ActiveRecord::Base
 
   before_save :strip_whitespace
 
-  validates :key, presence: true, uniqueness: true, length: { minimum: 6 }
-  validates :secret, uniqueness: true, length: { minimum: 6 }
+  validates :key, presence: true, uniqueness: true, length: { minimum: 6 }, :format => { :with => /\A[a-z0-9\s]+\z/i }
+  validates :secret, uniqueness: true, length: { minimum: 6 }, :format => { :with => /\A[a-z0-9\s]+\z/i }
   validates :name, presence: true, length: { in: 2..14 }
 
   def strip_whitespace

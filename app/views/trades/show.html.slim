@@ -4,7 +4,7 @@
     |  Back 
 br
 br
-h1 = "Trade details of user #{params[:username] || current_user.try(:username)}"
+h1 = "Trade details of user #{@orders_histories.first.user.username}"
 .table-responsive
   table.table.table-striped.table-bordered.table-hover
     thead
