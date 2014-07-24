@@ -8,8 +8,9 @@ class Ability
     if signed_in
       can :manage, :all  if current_user.role == 'admin'
       can :manage, [OrdersHistory, Trade, Api], :user_id => current_user.id
-      can :read, [OrdersHistory, Trade]
       cannot [:edit, :destroy], OrdersHistory, added_by: "API"
     end
+    can :read, [OrdersHistory, Trade]
+
   end
 end

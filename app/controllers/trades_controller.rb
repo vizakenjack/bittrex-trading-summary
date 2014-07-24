@@ -8,7 +8,7 @@ class TradesController < ApplicationController
     authorize! :read, Trade
     @orders_history = OrdersHistory.new
     user =  params[:username].present? ? User.find_by(username: params[:username]) : current_user
-    @trades = user.trades.includes(:coin).order("last_trade DESC").all
+    @trades = user.trades.includes(:coin, :user).order("last_trade DESC").all
     @api = current_user.api
   end
 
@@ -16,7 +16,7 @@ class TradesController < ApplicationController
   # GET /trades/1.json
   def show
     authorize! :read, Trade
-    @orders_histories = @trade.orders_histories.includes(:exchange, :coin).order("created_at DESC")
+    @orders_histories = @trade.orders_histories.includes(:exchange, :coin, :user).order("created_at DESC")
   end
 
   # GET /trades/new
