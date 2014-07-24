@@ -5,6 +5,7 @@ class Coin < ActiveRecord::Base
     api = Api.system
     bittrex = Bittrex.new(api.key, api.secret)
     coins = bittrex.summaries
+    return false unless coins
     coins.each do |coin|
       name = coin['MarketName'].split("-")[1]
       coin_in_base = Coin.create_with(name: name, tag: name).find_or_initialize_by(name: name)

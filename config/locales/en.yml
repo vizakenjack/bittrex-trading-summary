@@ -31,6 +31,7 @@ en:
     coins: Coins
     exchanges: Exchanges
     api: API keys
+    users: Users
   sign_in: Sign in
   sign_up: Register
   sign_out: Log out

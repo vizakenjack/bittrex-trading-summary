@@ -24,5 +24,7 @@
                 = link_to glyph('pencil')+' Edit', edit_api_path(api), class: "btn btn-primary"
                 = link_destroy(api)
 - else
-  h1.text-cnt You have no API keys.
-  p.text-cnt = link_to "Add new API keys", new_api_path, class: "btn btn-primary btn-lg"
+    h1.text-cnt Enter your API keys.
+    p.text-cnt
+      = link_to "Get your API keys here", "https://bittrex.com/Account/ManageApiKey", class: "btn btn-primary btn-lg mr2", target: "_blank"
+      = link_to "Add new API keys", new_api_path, class: "btn btn-success btn-lg"

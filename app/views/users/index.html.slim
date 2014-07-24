@@ -1,0 +1,31 @@
+h1 = "Listing users"
+
+.table-responsive
+  table#users-table.table.table-striped.table-bordered
+    thead
+      tr
+        th User
+        th.text-center Stats
+        th
+
+    tbody
+      - @users.each do |user|
+        tr
+          td = user.username
+          td width="60%"
+            table.inner-table
+              tr
+                td.text-right width="50%" Total BTC invested:
+                td width="50%" = btc_format user.btc_invested
+              tr
+                td.text-right width="50%" Total BTC received:
+                td width="50%" = btc_format user.btc_received
+              tr
+                td.text-right width="50%" Estimate profit:
+                td width="50%" = btc_format user.trade_profit
+
+
+          td.text-cnt: .btn-group
+              = link_show(trades_path(username: user.username))
+              / = link_to 'Edit', edit_trade_path(trade), class: "btn btn-md btn-primary"
+              = link_destroy(user, remote: true)  if can? :destroy, user
