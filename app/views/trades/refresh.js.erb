@@ -1,0 +1,3 @@
+var row = $('tr[data-trade-id="<%= @trade.id %>"]');
+row.replaceWith('<%= j render(@trade) %>');
+$(row.selector).find("td").effect("highlight", 1300);

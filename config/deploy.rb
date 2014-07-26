@@ -10,7 +10,7 @@ require 'mina/rbenv'  # for rbenv support. (http://rbenv.org)
 #   repository   - Git repo to clone from. (needed by mina/git)
 #   branch       - Branch name to deploy. (needed by mina/git)
 
-set :domain, 'vzkj.ru'
+set :domain, 'trade.vzkj.ru'
 set :deploy_to, '/var/www/trading'
 set :repository, 'git@bitbucket.org:Vizakenjack/trading.git'
 set :branch, 'master'
@@ -55,7 +55,7 @@ task :deploy => :environment do
     # instance of your project.
     invoke :'git:clone'
     invoke :'deploy:link_shared_paths'
-    # invoke :'bundle:install'
+    invoke :'bundle:install'
     invoke :'rails:db_migrate'
     invoke :'rails:assets_precompile'
     invoke :'deploy:cleanup'

@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   scope '(:username)' do
     resources :trades do
       get 'debug', on: :collection
+      post 'refresh', on: :member
     end
   end
 

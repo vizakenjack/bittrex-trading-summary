@@ -6,9 +6,9 @@ class Ability
     signed_in = !current_user.new_record?
 
     if signed_in
-      can :manage, :all  if current_user.role == 'admin'
       can :manage, [OrdersHistory, Trade, Api], :user_id => current_user.id
       cannot [:edit, :destroy], OrdersHistory, added_by: "API"
+      can :manage, :all  if current_user.role == 'admin'
     end
     can :read, [OrdersHistory, Trade]
 

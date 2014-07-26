@@ -43,7 +43,7 @@ module ApplicationHelper
   end
 
   def link_show(path)
-    link_to path, class: "btn btn-md btn-default" do
+    link_to path, class: "btn btn-md btn-primary" do
       glyph('th-list') + ' Show'
     end
   end

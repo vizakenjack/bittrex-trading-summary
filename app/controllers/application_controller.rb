@@ -14,6 +14,7 @@ class ApplicationController < ActionController::Base
   end
 
   def index
+    return redirect_to trades_path(username: current_user.username)  if signed_in?
     render 'templates/index'
   end
 
@@ -22,6 +23,13 @@ class ApplicationController < ActionController::Base
   end
 
   protected
+
+  def respond_with_invalid_key(key_name)
+    respond_to do |format|
+      format.html { redirect_to :back, alert: "API key '#{key_name}' is invalid." }
+      format.js { render :json => { :header => "Invalid API key.", :message => "API key '#{key_name}' is invalid." }, :status => 403}
+    end
+  end
 
   def require_admin!
     current_user and current_user.role == 'admin' # unless Rails.env.development?
