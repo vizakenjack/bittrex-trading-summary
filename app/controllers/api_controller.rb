@@ -19,6 +19,7 @@ class ApiController < ApplicationController
 
   def sync
     @results = @api.sync
+    return respond_with_invalid_key(@api.name)  if @results == "APIKEY_INVALID"
 
     respond_to do |format|
       format.html { redirect_to trades_path, notice: "Successfully synchronized." }
