@@ -35,6 +35,8 @@ gem "paperclip", '~> 3.0'
 gem 'rest_client'
 # gem 'addressable'
 gem "paranoia", "~> 2.0"
+gem 'whenever', :require => false
+
 
 # helpers
 gem 'cancan'
@@ -48,13 +50,12 @@ gem "recaptcha", :require => "recaptcha/rails"
 #gem "breadcrumbs_on_rails"
 #gem "crummy"
 #gem 'draper', '0.18.0'
-#gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git'
 gem 'less-rails-bootstrap'
 # gem 'bootstrap-generators', :git => 'git://github.com/decioferreira/bootstrap-generators.git'
 gem "font-awesome-rails"
 gem 'awesome_nested_set'
 gem 'enum_help'
-gem 'whenever', :require => false
+gem "select2-rails"
 
 gem 'pry-rails'
 

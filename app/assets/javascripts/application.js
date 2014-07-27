@@ -11,6 +11,7 @@
 // about supported directives.
 //
 //= require jquery
+//= require select2
 //= require jquery_ujs
 //= require jquery.ui.effect-highlight
 //= require jquery.ui.effect-shake

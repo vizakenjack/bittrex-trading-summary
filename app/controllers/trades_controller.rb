@@ -39,13 +39,24 @@ class TradesController < ApplicationController
   # POST /trades
   # POST /trades.json
   def create
+    coins_added = []
     authorize! :create, Trade
     if params[:orders_history][:api_id] and api = current_user.api.find(params[:orders_history][:api_id])
       # todo: fix exchanges
       trx = Bittrex.new(api.key, api.secret)
-      coin = Coin.find(params[:orders_history][:coin_id])
-      history = trx.order_history(coin.tag, 500)
-      @result = OrdersHistory.add_from_api(coin, params[:orders_history][:exchange_id], current_user.id, history)
+      params[:orders_history][:coin_id].select { |e| e != "" }.each do |coin_id|
+        coin = Coin.find(coin_id)
+        history = trx.order_history(coin.tag, 500)
+        result = OrdersHistory.add_from_api(coin, params[:orders_history][:exchange_id], current_user.id, history)
+        coins_added << {status: result[:status], name: coin.tag }
+      end
+      if coins_added.select{ |e| e[:status] == :success }.any?
+        names = coins_added.collect { |e| e[:name] }.join(", ")
+        @result = { status: :success, message: "Successfully added #{names}." }
+      else
+        names = coins_added.collect { |e| e[:name] }.join(", ")
+        @result = { status: :error, message: "there are no new records for #{names}." }
+      end
     else
       coin = Coin.find(params[:orders_history][:coin_id])
       @result = OrdersHistory.add_manual(current_user.id, orders_history_params)
@@ -54,9 +65,9 @@ class TradesController < ApplicationController
     respond_to do |format|
       format.html {
         if @result[:status] == :success
-          redirect_to(trades_path(username: current_user.username), notice: "#{pluralize @result[:message], "order"} has been added.")
+          redirect_to(trades_path(username: current_user.username), notice: @result[:message])
         else
-          redirect_to(trades_path(username: current_user.username), alert: "Trade not saved: #{messages_to_list @result[:message]}")
+          redirect_to(trades_path(username: current_user.username), alert: "Trade not saved: #{@result[:message]}")
         end
       }
     end
