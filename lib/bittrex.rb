@@ -13,8 +13,9 @@ class Bittrex
 
   def generate_sign
     nonce = Time.now.to_i
-    uri = "https://bittrex.com/api/v1.1/market/getopenorders?apikey=${@api_key}&nonce=#{nonce}"
-    sign = Digest::SHA512.hexdigest(uri+@api_secret)
+    url = "#{url}?apikey=#{@api_key}&nonce=#{nonce}&"+params
+    sign = OpenSSL::HMAC.hexdigest(digest = OpenSSL::Digest.new('sha512'), @api_secret, url)
+    response = JSON.parse(RestClient.get(url, {'apisign' => sign}))
   end
 
   def request(url, params = '')

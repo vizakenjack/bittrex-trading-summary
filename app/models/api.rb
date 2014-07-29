@@ -19,10 +19,11 @@ class Api < ActiveRecord::Base
     trx = Bittrex.new(key, secret)
     history = trx.order_history(nil, 500)
     return "APIKEY_INVALID"  if history == "APIKEY_INVALID"
-    coin_tags = history.collect{|e| e['Exchange'].split("-")[1]}.uniq
+    coin_tags = history.compact.collect{|e| e['Exchange'].split("-")[1]}.uniq
     coin_tags.each do |coin_tag|
-      coin = Coin.find_by(tag: coin_tag)
+      coin = Coin.find_or_create(tag: coin_tag)
       history = trx.order_history(coin.tag, 500)
+      next  if history == "INVALID_MARKET"
       results << OrdersHistory.add_from_api(coin, exchange_id, user_id, history)
       sleep 1
     end
