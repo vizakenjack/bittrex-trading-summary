@@ -65,3 +65,15 @@ task :deploy => :environment do
     end
   end
 end
+
+namespace :log do
+  desc 'tail -f log/production.log'
+  task :tail do
+    queue %[cd #{deploy_to!} && tail -f shared/log/production.log]
+  end
+  
+  desc 'less log/production.log'
+  task :n do
+    queue %[cd #{deploy_to!} && tail -n 100 shared/log/production.log]
+  end
+end

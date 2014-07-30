@@ -106,6 +106,7 @@ GEM
     minitest (5.4.0)
     multi_json (1.10.1)
     netrc (0.7.7)
+    newrelic_rpm (3.9.0.229)
     nokogiri (1.6.3)
       mini_portile (= 0.6.0)
     nokogumbo (1.1.9)
@@ -253,6 +254,7 @@ DEPENDENCIES
   less-rails
   less-rails-bootstrap
   libv8
+  newrelic_rpm
   paperclip (~> 3.0)
   paranoia (~> 2.0)
   pg
