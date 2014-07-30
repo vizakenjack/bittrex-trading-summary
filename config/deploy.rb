@@ -15,6 +15,8 @@ set :deploy_to, '/var/www/trading'
 set :repository, 'git@bitbucket.org:Vizakenjack/trading.git'
 set :branch, 'master'
 
+set_default :bundle_options, lambda { %{--without #{bundle_withouts} --path "#{bundle_path}" --deployment} }
+
 # Manually create these paths in shared/ (eg: shared/config/database.yml) in your server.
 # They will be linked in the 'deploy:link_shared_paths' step.
 set :shared_paths, ['config/database.yml', 'log', 'tmp']
@@ -75,5 +77,23 @@ namespace :log do
   desc 'less log/production.log'
   task :n do
     queue %[cd #{deploy_to!} && tail -n 100 shared/log/production.log]
+  end
+end
+
+set_default :bundle_bin, 'bundle'
+set_default :bundle_path, './vendor/bundle'
+set_default :bundle_withouts, 'development:test'
+set_default :bundle_options, lambda { %{--without #{bundle_withouts} --path "#{bundle_path}" --deployment} }
+
+namespace :bundle do
+  desc "Install gem dependencies using Bundler."
+  task :install do
+    queue %{
+      echo "-----> Installing gem dependencies using Bundler"
+      #{echo_cmd %[mkdir -p "#{deploy_to}/#{shared_path}/bundle"]}
+      #{echo_cmd %[mkdir -p "#{File.dirname bundle_path}"]}
+      #{echo_cmd %[ln -s "#{deploy_to}/#{shared_path}/bundle" "#{bundle_path}"]}
+      #{echo_cmd %[#{bundle_bin} install #{bundle_options}]}
+    }
   end
 end
