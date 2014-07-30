@@ -8,8 +8,7 @@ class TradesController < ApplicationController
     authorize! :read, Trade
     @orders_history = OrdersHistory.new
     user = params[:username].present? ? User.find_by(username: params[:username]) : current_user
-    @trades = user.trades.includes(:coin, :user).order("last_trade DESC").all  if user
-    @api = current_user.api  if signed_in?
+    @trades = user.all_trades
   end
 
   def debug

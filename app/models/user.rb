@@ -18,5 +18,9 @@ class User < ActiveRecord::Base
     recent_trade = self.trades.first
   end
 
+  def all_trades
+    trades.includes(:coin, :user).order("last_trade DESC").all
+  end
+
 
 end

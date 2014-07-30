@@ -17,6 +17,7 @@ module Trading
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # I18n.enforce_available_locales = true
     config.autoload_paths << Rails.root.join('lib')
+    # config.autoload_paths += Dir["#{config.root}/lib/**/"]
     config.i18n.default_locale = :en
     
     config.generators.stylesheets = false
