@@ -63,7 +63,7 @@ task :deploy => :environment do
     invoke :'deploy:cleanup'
 
     to :launch do
-      queue 'RAILS_ENV=production bundle exec thin restart -C trading.yml'
+      # queue 'RAILS_ENV=production bundle exec thin restart -C trading.yml'
     end
   end
 end
@@ -80,20 +80,3 @@ namespace :log do
   end
 end
 
-set_default :bundle_bin, 'bundle'
-set_default :bundle_path, './vendor/bundle'
-set_default :bundle_withouts, 'development:test'
-set_default :bundle_options, lambda { %{--without #{bundle_withouts} --path "#{bundle_path}" --deployment} }
-
-namespace :bundle do
-  desc "Install gem dependencies using Bundler."
-  task :install do
-    queue %{
-      echo "-----> Installing gem dependencies using Bundler"
-      #{echo_cmd %[mkdir -p "#{deploy_to}/#{shared_path}/bundle"]}
-      #{echo_cmd %[mkdir -p "#{File.dirname bundle_path}"]}
-      #{echo_cmd %[ln -s "#{deploy_to}/#{shared_path}/bundle" "#{bundle_path}"]}
-      #{echo_cmd %[#{bundle_bin} install #{bundle_options}]}
-    }
-  end
-end

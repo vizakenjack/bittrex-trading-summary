@@ -35,6 +35,8 @@ class OrdersHistory < ActiveRecord::Base
         next  if amount == 0
         btc_amount = (amount * line['PricePerUnit'])
         date = Time.parse(line['TimeStamp'])
+        # binding.pry
+        # return false
         order = self.create_with(coin_id: coin.id, user_id: user_id, exchange_id: exchange_id, order_type: order_type, \
         created_at: date, updated_at: Time.now, amount: amount, price: line['PricePerUnit'], \
         btc_amount: btc_amount, added_by: 'API').find_or_initialize_by(uuid: line['OrderUuid'])
