@@ -31,7 +31,7 @@ class Api < ActiveRecord::Base
   end
 
   def self.system
-    ## FIX ME ##
+    ## todo: fix it ##
     self.first
   end
 

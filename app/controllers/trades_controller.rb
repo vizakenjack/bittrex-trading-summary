@@ -74,8 +74,8 @@ class TradesController < ApplicationController
 
   def refresh
     @trade = Trade.includes(:coin, {user: :api}).find(params[:id])
-    p "trade = #{@trade.inspect}"
     coin = @trade.coin
+    coin.update_price
     authorize! :edit, @trade
     current_user.api.all.each do |api|
       # todo: fix exchanges
