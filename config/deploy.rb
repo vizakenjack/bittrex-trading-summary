@@ -63,7 +63,7 @@ task :deploy => :environment do
     invoke :'deploy:cleanup'
 
     to :launch do
-      # queue 'RAILS_ENV=production bundle exec thin restart -C trading.yml'
+      queue 'RAILS_ENV=production bundle exec thin restart -C trading.yml'
     end
   end
 end
