@@ -19,6 +19,9 @@ gem 'less-rails'
 
 gem 'spring',        group: :development
 
+# MY
+gem 'bittrex', git: 'git://github.com/Vizakenjack/ruby-bittrex-api.git'
+
 # system
 gem 'russian'
 gem 'devise'
@@ -72,8 +75,7 @@ group :development, :test do
 end
 
 gem 'rb-readline'
-
-gem 'newrelic_rpm'
+# gem 'newrelic_rpm'
 
 
 # Use ActiveModel has_secure_password

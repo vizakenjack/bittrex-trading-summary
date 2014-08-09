@@ -6,4 +6,9 @@ class UsersController < ApplicationController
   def show
     @user = User.find params[:id]
   end
+
+  def update_stats
+    User.update_all_stats
+    redirect_to users_path(notice: "Updated!")
+  end
 end

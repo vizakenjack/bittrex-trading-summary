@@ -6,7 +6,9 @@ class OrdersHistory < ActiveRecord::Base
   belongs_to :exchange
   belongs_to :trade
 
-  before_destroy :return_amount
+  before_destroy :return_amount_and_save
+  before_update :return_amount
+  after_update :add_amount_and_save
 
   attr_accessor :api_id
 
@@ -23,103 +25,101 @@ class OrdersHistory < ActiveRecord::Base
   
 
   def self.add_from_api(coin, exchange_id, user_id, history)
-    # OrdersHistory.delete_all
-    # Trade.delete_all
+    coin_hash = CoinHash.new(coin)
+    params = { coin_id: coin.id, user_id: user_id, exchange_id: exchange_id }
 
-    coin_hash = {}
     OrdersHistory.transaction do
-      history.each do |line|
-        order_type = 'Sell'  if line['OrderType'] == 'LIMIT_SELL' or line['OrderType'] == "Sell"
-        order_type = 'Buy'  if line['OrderType'] == 'LIMIT_BUY' or line['OrderType'] == "Buy"
-        amount = line['Quantity'] - line['QuantityRemaining']
-        next  if amount == 0
-        btc_amount = (amount * line['PricePerUnit'])
-        date = DateTime.parse(line['TimeStamp'])
-        order = self.create_with(coin_id: coin.id, user_id: user_id, exchange_id: exchange_id, order_type: order_type, \
-        created_at: date, updated_at: Time.now, amount: amount, price: line['PricePerUnit'], \
-        btc_amount: btc_amount, added_by: 'API').find_or_initialize_by(uuid: line['OrderUuid'])
+      history.each do |history_record|
 
-        if order.new_record?
-          coin_hash = {id: coin.id, amount_bought: 0.0, btc_amount_bought: 0.0, amount_sold: 0.0, \
-          btc_amount_sold: 0.0, last_trade: date, counter: 0}  if coin_hash.empty?
+        filler = BittrexApiFiller.new(history_record)
+        filler.output.present? ? params.merge!(filler.output) : next
 
-          if order_type == 'Buy'
-            coin_hash[:amount_bought] += amount
-            coin_hash[:btc_amount_bought] += btc_amount
-          elsif order_type == 'Sell'
-            coin_hash[:amount_sold] += amount
-            coin_hash[:btc_amount_sold] += btc_amount
-          end
-          coin_hash[:last_trade] = date  if coin_hash[:last_trade] < date
-          coin_hash[:counter] += 1
-          return { status: :error, message: order.errors.full_messages }  unless order.save
+        order = self.create_with(params).find_or_initialize_by(uuid: params[:uuid])
+        coin_hash.add_filler_to_hash(filler)  if order.new_record? and filler.present?
+        return { status: :error, message: order.errors.full_messages }  unless order.save
+      end
+
+      create_user_and_trade(coin_hash, coin.name, params)
+    end
+  end
+
+   
+
+  def self.add_manual(user_id, orders_history_params)
+    coin = Coin.find orders_history_params[:coin_id]
+    coin_hash = CoinHash.new(coin)
+    params = { coin_id: coin.id, user_id: user_id, exchange_id: orders_history_params[:exchange_id] }
+
+    OrdersHistory.transaction do
+      filler = ManualFiller.new(orders_history_params)
+      params.merge!(filler.output)
+
+      order = self.new(params)
+      coin_hash.add_filler_to_hash(filler)  if order.new_record? and filler.present?
+      return { status: :error, message: order.errors.full_messages }  unless order.save
+    end
+
+    create_user_and_trade(coin_hash, coin.name, params)
+
+    { status: :success, message: 1 }
+  end
+
+  def self.create_user_and_trade(coin_hash, coin_name, params)
+    if coin_hash.any?
+      Trade.transaction do
+        @trade = Trade.where(coin_id: params[:coin_id], user_id: params[:user_id]).first_or_initialize
+        @trade.add_values(coin_hash.result)
+        self.where(coin_id: params[:coin_id], user_id: params[:user_id], exchange_id: params[:exchange_id]).update_all(trade_id: @trade.id)
+        
+        User.transaction do
+          user = User.find params[:user_id]
+          user.btc_invested += coin_hash.result[:btc_amount_bought]
+          user.btc_received += coin_hash.result[:btc_amount_sold]
+          user.trade_profit += @trade.sold_more? ? @trade.actual_sold : (@trade.profit)
+          user.save!
         end
       end
 
-      if coin_hash.present?
-        create_user_and_trade(coin_hash, user_id, exchange_id)
-        result = { status: :success, message: coin_hash[:counter], coin_name: coin.name }
-      else
-        result = { status: :error, message: ["There are no new records for #{coin.name}"] }
-      end
+      { status: :success, message: coin_hash.result[:counter], coin_name: coin_name }
+    else
+      { status: :error, message: ["There are no new records for #{coin_name}"] }
     end
-
-  end
-
-  def self.add_manual(user_id, orders_history_params)
-    OrdersHistory.transaction do
-
-      order = self.new(orders_history_params)
-      order.btc_amount = order.amount * order.price
-      order.user_id = user_id
-      order.added_by = 'Manual'
-      return { status: :error, message: order.errors.full_messages }  unless order.save
-
-      coin_hash = {id: orders_history_params[:coin_id], amount_bought: 0, btc_amount_bought: 0, amount_sold: 0.0, \
-      btc_amount_sold: 0.0, last_trade: order.created_at, counter: 1}
-
-      if order.order_type == 'Buy'
-        coin_hash[:amount_bought] = order.amount
-        coin_hash[:btc_amount_bought] = order.amount * order.price
-      elsif order.order_type == 'Sell'
-        coin_hash[:amount_sold] = order.amount
-        coin_hash[:btc_amount_sold] = order.amount * order.price
-      end
-
-      create_user_and_trade(coin_hash, user_id, orders_history_params[:exchange_id])
-
-    end
-
-    result = { status: :success, message: 1 }
   end
 
   def return_amount
     if order_type == 'Buy'
-      trade.amount_bought -= amount
-      trade.price_bought -= btc_amount
+      trade.amount_bought -= amount_was
+      trade.price_bought -= btc_amount_was
     elsif order_type == 'Sell'
-      trade.amount_sold -= amount
-      trade.price_sold -= btc_amount
+      trade.amount_sold -= amount_was
+      trade.price_sold -= btc_amount_was
     end
-    trade.recount_values
+    # p "removed anount: #{amount_was} and btc: #{btc_amount_was}"
+  end
 
+  def add_amount
+    self.update_column :btc_amount, (amount * price)
+    if order_type == 'Buy'
+      trade.amount_bought += amount
+      trade.price_bought += btc_amount
+    elsif order_type == 'Sell'
+      trade.amount_sold += amount
+      trade.price_sold += btc_amount
+    end
+    # p "added anount: #{amount} and btc: #{amount * price}"
+  end
+
+  def return_amount_and_save
+    return_amount
+    trade.recount_values
     trade.save!
   end
 
-  def self.create_user_and_trade(coin_hash, user_id, exchange_id)
-    Trade.transaction do
-      @trade = Trade.where(coin_id: coin_hash[:id], user_id: user_id).first_or_initialize
-      @trade.add_values(coin_hash)
-      self.where(coin_id: coin_hash[:id], user_id: user_id, exchange_id: exchange_id).update_all(trade_id: @trade.id)
-      
-      User.transaction do
-        user = User.find user_id
-        user.btc_invested += coin_hash[:btc_amount_bought]
-        user.btc_received += coin_hash[:btc_amount_sold]
-        user.trade_profit += @trade.sold_more? ? @trade.actual_sold : (@trade.profit)
-        user.save!
-      end
-    end
+  def add_amount_and_save
+    add_amount
+    trade.recount_values
+    trade.save!
   end
+
 
 end

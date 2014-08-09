@@ -1,5 +1,8 @@
 h1 = "Listing users"
 
+- if can? :manage, User
+  p = link_to "Update user stats", update_stats_users_path, class: "btn btn-primary btn-lg", method: 'post'
+
 .table-responsive
   table#users-table.table.table-striped.table-bordered
     thead

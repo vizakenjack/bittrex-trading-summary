@@ -22,5 +22,17 @@ class User < ActiveRecord::Base
     trades.includes(:coin, :user).order("last_trade DESC").all
   end
 
+  def self.update_all_stats
+    users = self.includes(:trades).all
+    users.update_all "btc_invested = 0.0, btc_received = 0.0, trade_profit = 0.0"
+
+    users.each do |user|
+      user.btc_invested = user.trades.inject(0){|i,e| i + e.price_bought }
+      user.btc_received = user.trades.inject(0){|i,e| i + e.price_sold }
+      user.trade_profit = user.btc_received - user.btc_invested
+      user.save!
+    end
+  end
+
 
 end

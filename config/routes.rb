@@ -1,7 +1,10 @@
 Rails.application.routes.draw do
 
   devise_for :users
-  resources :users
+  resources :users do
+    post 'update_stats', on: :collection
+    
+  end
   
   resources :api do
     post 'sync', on: :member
