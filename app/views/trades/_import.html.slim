@@ -1,7 +1,7 @@
 #modal-import-history.modal.fade
   .modal-dialog
     .modal-content
-      = simple_form_for(@orders_history, url: trades_path, :html => { :class => 'form-vertical' }) do |f|
+      = simple_form_for(@orders_history, url: trades_path, :html => { :class => 'form-vertical' }, remote: true) do |f|
         .modal-header
           button.close data-dismiss="modal" type="button" 
             span aria-hidden="true"  &times;
@@ -14,4 +14,4 @@
               = f.input :api_id, collection: current_user.api.to_a, include_blank: false, label_method: lambda { |e| e.name }, wrapper_html: {class: "#{'hidden'  if current_user.api.size == 1} "}
         .modal-footer
           button.btn.btn-default data-dismiss="modal" type="button"  Close
-          = f.submit 'Add', :class => 'btn btn-primary'
+          = f.submit 'Add', :class => 'btn btn-primary', data: { "disable-with" => "Creating..." }

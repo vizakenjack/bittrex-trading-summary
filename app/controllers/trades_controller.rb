@@ -21,7 +21,7 @@ class TradesController < ApplicationController
   # GET /trades/1.json
   def show
     authorize! :read, @trade
-    @orders_histories = @trade.orders_histories.includes(:exchange, :coin, :user).order("created_at DESC")
+    @orders_histories = @trade.orders_histories.includes(:exchange, :coin, :user).order("executed_at DESC")
   end
 
   # GET /trades/new
@@ -38,36 +38,17 @@ class TradesController < ApplicationController
   # POST /trades
   # POST /trades.json
   def create
-    coins_added = []
     authorize! :create, Trade
-    if params[:orders_history][:api_id] and api = current_user.api.find(params[:orders_history][:api_id])
-      # todo: fix exchanges
-      trx = Bittrex.new(api.key, api.secret)
-      params[:orders_history][:coin_id].select { |e| e != "" }.each do |coin_id|
-        coin = Coin.find(coin_id)
-        history = trx.order_history(coin.tag, 500)
-        result = OrdersHistory.add_from_api(coin, params[:orders_history][:exchange_id], current_user.id, history)
-        coins_added << {status: result[:status], name: coin.tag }
-      end
-      if coins_added.select{ |e| e[:status] == :success }.any?
-        names = coins_added.collect { |e| e[:name] }.join(", ")
-        @result = { status: :success, message: "Successfully added #{names}." }
-      else
-        names = coins_added.collect { |e| e[:name] }.join(", ")
-        @result = { status: :error, message: "there are no new records for #{names}." }
-      end
-    else
-      coin = Coin.find(params[:orders_history][:coin_id])
-      @result = OrdersHistory.add_manual(current_user.id, orders_history_params)
-    end
+    parser = CoinParser.new(params, current_user)
+    @result = parser.result
 
     respond_to do |format|
       format.html {
-        if @result[:status] == :success
-          redirect_to(trades_path(username: current_user.username), notice: @result[:message])
-        else
-          redirect_to(trades_path(username: current_user.username), alert: "Trade not saved: #{@result[:message]}")
-        end
+        response_with(notice: @result[:message])  if @result[:status] == :success
+        response_with(alert: "Trade not saved: #{@result[:message]}") if @result[:status] == :error
+      }
+      format.js { 
+         @trade = current_user.trades.last  if @result[:status] == :success
       }
     end
   end
@@ -86,13 +67,9 @@ class TradesController < ApplicationController
     end
 
     respond_to do |format|
-
       format.html {
-        if @result[:status] == :success
-          redirect_to(trades_path(username: current_user.username), notice: "#{pluralize @result[:message], "order"} has been added.")
-        else
-          redirect_to(trades_path(username: current_user.username), alert: "Trade not saved: #{messages_to_list @result[:message]}")
-        end
+        response_with(notice: "#{pluralize @result[:message], "order"} has been added.")  if @result[:status] == :success
+        response_with(alert: "Trade not saved: #{messages_to_list @result[:message]}")  if @result[:status] == :error
       }
       format.js
     end
@@ -137,5 +114,9 @@ class TradesController < ApplicationController
 
     def orders_history_params
       params.require(:orders_history).permit(:coin_id, :exchange_id, :order_type, :amount, :price)
+    end
+
+    def response_with(message)
+      redirect_to(trades_path(username: current_user.username), message)
     end
 end

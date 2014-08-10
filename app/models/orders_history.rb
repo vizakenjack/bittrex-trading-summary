@@ -29,6 +29,8 @@ class OrdersHistory < ActiveRecord::Base
     params = { coin_id: coin.id, user_id: user_id, exchange_id: exchange_id }
 
     OrdersHistory.transaction do
+      #todo : works only with bittrex
+      return { status: :error, message: "Invalid market" }  if history == "INVALID_MARKET"
       history.each do |history_record|
 
         filler = BittrexApiFiller.new(history_record)
@@ -45,20 +47,20 @@ class OrdersHistory < ActiveRecord::Base
 
    
 
-  def self.add_manual(user_id, orders_history_params)
-    coin = Coin.find orders_history_params[:coin_id]
+  def self.add_manual(user_id, oh_params)
+    coin = Coin.find oh_params[:orders_history][:coin_id]
     coin_hash = CoinHash.new(coin)
-    params = { coin_id: coin.id, user_id: user_id, exchange_id: orders_history_params[:exchange_id] }
+    params = { coin_id: coin.id, user_id: user_id, exchange_id: oh_params[:orders_history][:exchange_id] }
 
     OrdersHistory.transaction do
-      filler = ManualFiller.new(orders_history_params)
+      filler = ManualFiller.new(oh_params[:orders_history])
       params.merge!(filler.output)
 
       order = self.new(params)
       coin_hash.add_filler_to_hash(filler)  if order.new_record? and filler.present?
       return { status: :error, message: order.errors.full_messages }  unless order.save
     end
-
+    p "coin_hash = #{coin_hash.inspect}"
     create_user_and_trade(coin_hash, coin.name, params)
 
     { status: :success, message: 1 }
@@ -70,14 +72,15 @@ class OrdersHistory < ActiveRecord::Base
         @trade = Trade.where(coin_id: params[:coin_id], user_id: params[:user_id]).first_or_initialize
         @trade.add_values(coin_hash.result)
         self.where(coin_id: params[:coin_id], user_id: params[:user_id], exchange_id: params[:exchange_id]).update_all(trade_id: @trade.id)
-        
-        User.transaction do
-          user = User.find params[:user_id]
-          user.btc_invested += coin_hash.result[:btc_amount_bought]
-          user.btc_received += coin_hash.result[:btc_amount_sold]
-          user.trade_profit += @trade.sold_more? ? @trade.actual_sold : (@trade.profit)
-          user.save!
-        end
+        user = User.find params[:user_id]
+        user.recount_profit(coin_hash, @trade)
+        # User.transaction do
+        #   user = User.find params[:user_id]
+        #   user.btc_invested += coin_hash.result[:btc_amount_bought]
+        #   user.btc_received += coin_hash.result[:btc_amount_sold]
+        #   user.trade_profit += @trade.sold_more? ? @trade.actual_sold : (@trade.profit)
+        #   user.save!
+        # end
       end
 
       { status: :success, message: coin_hash.result[:counter], coin_name: coin_name }
@@ -119,6 +122,7 @@ class OrdersHistory < ActiveRecord::Base
     add_amount
     trade.recount_values
     trade.save!
+    user.total_recount
   end
 
 

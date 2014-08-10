@@ -24,8 +24,16 @@ h1 = "Listing users"
                 td.text-right width="50%" Total BTC received:
                 td width="50%" = btc_format user.btc_received
               tr
-                td.text-right width="50%" Estimate profit:
-                td width="50%" = btc_format user.trade_profit
+                td.text-right width="50%" Current investments:
+                td width="50%" = btc_format user.btc_investing
+              - if user.trade_profit != 0
+                tr
+                  td.text-right width="50%" Estimate profit:
+                  td width="50%" 
+                    = btc_format user.trade_profit
+                    |  (
+                    = btc_format(user.trade_profit + user.btc_investing)
+                    | )
 
 
           td.text-cnt: .btn-group

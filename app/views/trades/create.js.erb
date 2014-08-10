@@ -1,0 +1,7 @@
+$("#modal-import-history").modal("hide");
+<%- if  @result[:status] == :success %>
+$("#trades-table > tbody").prepend("<%= j render(@trade) %>");
+$("#trades-table > tbody").find("tr:first td").effect("highlight", 1300);
+<%- else %>
+window.create_alert("<%= @result[:message] %>")
+<%- end %>
