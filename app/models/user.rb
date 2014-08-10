@@ -45,10 +45,10 @@ class User < ActiveRecord::Base
 
   def recount_profit(coin_hash, trade)
     self.transaction do
-      user.btc_invested += coin_hash.result[:btc_amount_bought]
-      user.btc_received += coin_hash.result[:btc_amount_sold]
-      user.trade_profit += trade.sold_more? ? trade.actual_sold : (trade.profit)
-      user.save!
+      self.btc_invested += coin_hash.result[:btc_amount_bought]
+      self.btc_received += coin_hash.result[:btc_amount_sold]
+      self.trade_profit += trade.sold_more? ? trade.actual_sold : (trade.profit)
+      save!
     end
   end
 

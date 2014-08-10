@@ -1,7 +1,9 @@
 tr data-trade-id=trade.id
   /td = trade.user.username
   td 
-    p = trade.coin.name
+    p.coin-tag
+      / .coin-tag.label.label-default = trade.coin.name
+      = link_to trade.coin.name, trade, class: "coin-link-big label label-primary"
     p 
      small = ftime trade.last_trade
   td width="60%"

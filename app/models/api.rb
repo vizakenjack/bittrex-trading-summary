@@ -22,7 +22,7 @@ class Api < ActiveRecord::Base
     coin_tags = history.compact.collect{|e| e['Exchange'].split("-")[1]}.uniq
     coin_tags.each do |coin_tag|
       coin = Coin.find_or_create(tag: coin_tag)
-      history = trx.order_history(coin.tag, 500)
+      history = trx.order_history(coin_tag, 500)
       next  if history == "INVALID_MARKET"
       results << OrdersHistory.add_from_api(coin, exchange_id, user_id, history)
       sleep 1

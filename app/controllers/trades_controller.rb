@@ -12,7 +12,8 @@ class TradesController < ApplicationController
   end
 
   def debug
-    api = current_user.api.first
+    user = User.find_by(:username, params[:username])
+    api = user.api.first
     trx = Bittrex.new(api.key, api.secret)
     @history = trx.order_history(params[:coin], 500)
   end

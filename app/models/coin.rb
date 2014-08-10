@@ -28,11 +28,9 @@ class Coin < ActiveRecord::Base
 
   def self.find_or_create(options)
     if new_coin = self.create_with(name: options[:tag]).find_or_initialize_by(tag: options[:tag]) and new_coin.new_record?
-      api = Api.system
-      bittrex = Bittrex.new(api.key, api.secret)
-      ticker = bittrex.ticker(coin.tag)
-    else
-      new_coin
+      new_coin.update_price
+      new_coin.save!
     end
+    new_coin
   end
 end
