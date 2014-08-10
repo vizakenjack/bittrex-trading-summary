@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 RSpec.describe ExchangesController, :type => :routing do
   describe "routing" do

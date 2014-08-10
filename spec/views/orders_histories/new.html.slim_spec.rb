@@ -1,4 +1,4 @@
-require 'rails_helper'
+require 'spec_helper'
 
 RSpec.describe "orders_histories/new", :type => :view do
   before(:each) do

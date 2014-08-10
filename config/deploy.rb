@@ -22,8 +22,8 @@ set_default :bundle_options, lambda { %{--without #{bundle_withouts} --path "#{b
 set :shared_paths, ['config/database.yml', 'log', 'tmp']
 
 # Optional settings:
-  set :user, 'viza'    # Username in the server to SSH to.
-#   set :port, '30000'     # SSH port number.
+set :user, 'viza'    # Username in the server to SSH to.
+set :port, '222'     # SSH port number.
 
 # This task is the environment that is loaded for most commands, such as
 # `mina deploy` or `mina rake`.

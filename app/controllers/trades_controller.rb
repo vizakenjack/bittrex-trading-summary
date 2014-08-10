@@ -1,6 +1,7 @@
 class TradesController < ApplicationController
   include ActionView::Helpers::TextHelper
   before_action :set_trade, only: [:show, :edit, :update, :destroy]
+  respond_to :html, :js
 
   # GET /trades
   # GET /trades.json
@@ -12,17 +13,25 @@ class TradesController < ApplicationController
   end
 
   def debug
-    user = User.find_by(:username, params[:username])
+    user = User.where(username: params[:username]).first
     api = user.api.first
     trx = Bittrex.new(api.key, api.secret)
     @history = trx.order_history(params[:coin], 500)
+    
   end
 
   # GET /trades/1
   # GET /trades/1.json
   def show
     authorize! :read, @trade
-    @orders_histories = @trade.orders_histories.includes(:exchange, :coin, :user).order("executed_at DESC")
+    @selected_round = params[:round].presence || @trade.current_round_number
+    @orders_histories = @trade.load_orders_histories  unless request.xhr?
+    @round = Round.where(user_id: current_user.id, coin_id: @trade.coin_id, round_number: @selected_round).first
+
+    respond_to do |format|
+      format.html
+      format.js
+    end
   end
 
   # GET /trades/new
@@ -80,8 +89,9 @@ class TradesController < ApplicationController
   # PATCH/PUT /trades/1.json
   def update
     authorize! :edit, @trade
+    @trade.assign_attributes(trade_params)
     respond_to do |format|
-      if @trade.update(trade_params)
+      if @trade.save(trade_params)
         format.html { redirect_to @trade, notice: 'Trade was successfully updated.' }
         format.json { render :show, status: :ok, location: @trade }
       else
@@ -110,7 +120,19 @@ class TradesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def trade_params
-      params.require(:trade).permit(:user_id, :coin_id, :exchange_id, :amount_bought, :price_bought, :amount_sold, :price_sold, :amount_left, :amount_value, :profit, :percent)
+      params.require(:trade).permit(
+        :user_id, 
+        :coin_id, 
+        :exchange_id, 
+        :amount_bought, 
+        :price_bought, 
+        :amount_sold, 
+        :price_sold, 
+        :amount_left, 
+        :amount_value, 
+        :profit, 
+        :percent,
+        :current_round_number)
     end
 
     def orders_history_params

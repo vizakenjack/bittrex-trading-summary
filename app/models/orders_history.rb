@@ -1,14 +1,16 @@
 class OrdersHistory < ActiveRecord::Base
-  acts_as_paranoid
-
   belongs_to :user, counter_cache: true
   belongs_to :coin
   belongs_to :exchange
   belongs_to :trade
+  belongs_to :round
 
-  before_destroy :return_amount_and_save
-  before_update :return_amount
-  after_update :add_amount_and_save
+  before_destroy :decrease_values_of_round_and_trade
+  # before_destroy :return_amount_and_save
+  before_update :return_amount,  unless: "round_number_changed?"
+  before_update :update_round_values,  unless: "round_number_changed?"
+  after_update :add_amount_and_save,  unless: "round_number_changed?"
+  after_update 'user.total_recount',  unless: "round_number_changed?"
 
   attr_accessor :api_id
 
@@ -22,6 +24,7 @@ class OrdersHistory < ActiveRecord::Base
   validates :price, presence: true, numericality: { greater_than: 0 }
   validates :order_type, presence: true
   validates :added_by, presence: true
+  validates :round_number, presence: true, inclusion: { in: 1..999 }, allow_nil: false
   
 
   def self.add_from_api(coin, exchange_id, user_id, history)
@@ -60,7 +63,6 @@ class OrdersHistory < ActiveRecord::Base
       coin_hash.add_filler_to_hash(filler)  if order.new_record? and filler.present?
       return { status: :error, message: order.errors.full_messages }  unless order.save
     end
-    p "coin_hash = #{coin_hash.inspect}"
     create_user_and_trade(coin_hash, coin.name, params)
 
     { status: :success, message: 1 }
@@ -69,18 +71,23 @@ class OrdersHistory < ActiveRecord::Base
   def self.create_user_and_trade(coin_hash, coin_name, params)
     if coin_hash.any?
       Trade.transaction do
+        # after_create :create_round
         @trade = Trade.where(coin_id: params[:coin_id], user_id: params[:user_id]).first_or_initialize
+        is_new_record = @trade.new_record?
         @trade.add_values(coin_hash.result)
-        self.where(coin_id: params[:coin_id], user_id: params[:user_id], exchange_id: params[:exchange_id]).update_all(trade_id: @trade.id)
+        
+        @round = Round.where(coin_id: params[:coin_id], user_id: params[:user_id], round_number: @trade.current_round_number).first_or_initialize
+        @round.add_values(coin_hash.result)  unless is_new_record
+        @trade.add_rounds(@trade.current_round_number)  if @trade.current_round_number != 1
+        
+        self.where(
+          coin_id: params[:coin_id], 
+          user_id: params[:user_id], 
+          exchange_id: params[:exchange_id]
+        ).update_all(trade_id: @trade.id, round_id: @round.id, round_number: @trade.current_round_number)
+
         user = User.find params[:user_id]
         user.recount_profit(coin_hash, @trade)
-        # User.transaction do
-        #   user = User.find params[:user_id]
-        #   user.btc_invested += coin_hash.result[:btc_amount_bought]
-        #   user.btc_received += coin_hash.result[:btc_amount_sold]
-        #   user.trade_profit += @trade.sold_more? ? @trade.actual_sold : (@trade.profit)
-        #   user.save!
-        # end
       end
 
       { status: :success, message: coin_hash.result[:counter], coin_name: coin_name }
@@ -89,40 +96,94 @@ class OrdersHistory < ActiveRecord::Base
     end
   end
 
-  def return_amount
-    if order_type == 'Buy'
-      trade.amount_bought -= amount_was
-      trade.price_bought -= btc_amount_was
-    elsif order_type == 'Sell'
-      trade.amount_sold -= amount_was
-      trade.price_sold -= btc_amount_was
+  def return_amount(object = nil)
+    object ||= trade
+    if buy?
+      object.amount_bought -= amount_was
+      object.price_bought -= (amount_was * price_was)
+    elsif sell?
+      object.amount_sold -= amount_was
+      object.price_sold -= (amount_was * price_was)
     end
-    # p "removed anount: #{amount_was} and btc: #{btc_amount_was}"
-  end
-
-  def add_amount
     self.update_column :btc_amount, (amount * price)
-    if order_type == 'Buy'
-      trade.amount_bought += amount
-      trade.price_bought += btc_amount
-    elsif order_type == 'Sell'
-      trade.amount_sold += amount
-      trade.price_sold += btc_amount
+  end
+
+  def add_amount(object = nil)
+    object ||= trade
+    if buy?
+      object.amount_bought += amount
+      object.price_bought += btc_amount
+    elsif sell?
+      object.amount_sold += amount
+      object.price_sold += btc_amount
     end
-    # p "added anount: #{amount} and btc: #{amount * price}"
+    self.update_column :btc_amount, (amount * price)
   end
 
-  def return_amount_and_save
-    return_amount
-    trade.recount_values
-    trade.save!
+  def return_amount_and_save(object = nil)
+    object ||= trade
+    return_amount object
+    object.recount_values
+    object.save!
   end
 
-  def add_amount_and_save
-    add_amount
-    trade.recount_values
-    trade.save!
-    user.total_recount
+  def add_amount_and_save(object = nil)
+    object ||= trade
+    add_amount object
+    object.recount_values
+    object.save!
+  end
+
+  def update_round_values
+    Round.transaction do
+      return_amount round
+      add_amount_and_save round
+    end
+  end
+
+  def update_round(new_round_number)
+    Round.transaction do
+      if round
+        return_amount_and_save round
+        if round.amount_bought < 0.01 && round.amount_sold < 0.01
+          round.destroy
+        end
+      end
+      new_round = Round.where(user_id: self.user_id, coin_id: self.coin_id, round_number: new_round_number).first_or_initialize
+      self.add_amount_and_save new_round
+      new_round.save! #check it
+
+      self.update_attribute :round_id, new_round.id
+
+      self.trade.add_rounds(new_round_number)
+    end
+  end
+
+  private
+
+  def buy?
+    order_type == 'Buy'
+  end
+
+  def sell?
+    order_type == 'Sell'
+  end
+
+  def round_have_only_this_record?
+    (buy? && round.amount_bought == amount) || (sell? && round.amount_sold == amount)
+  end
+
+  def decrease_values_of_round_and_trade
+    return true  unless round
+
+    if round_have_only_this_record?
+      round.destroy
+    else
+      return_amount_and_save round
+    end
+    
+    return_amount_and_save trade
+    user.refund_order amount * price, sell?
   end
 
 

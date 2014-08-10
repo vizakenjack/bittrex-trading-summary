@@ -12,20 +12,22 @@
 - if @trades.present?
   h1 = "Listing trades of user #{params[:username] || current_user.try(:username)}"
 
-  .table-responsive
-    table#trades-table.table.table-striped.table-bordered
-      thead
-        tr
-          /th User
-          th Coin
-          th.text-center Stats
-          th
+.table-responsive
+  table#trades-table.table.table-striped.table-bordered
+    thead
+      tr
+        /th User
+        th Coin
+        th.text-center Stats
+        th
 
-      tbody
+    tbody
+      - if @trades.present?
         - @trades.each do |trade|
           = render trade
-- else
-  h1 Here will be your trade history.
+      - else
+        tr.autohide
+          td colspan="4": h1.cnt Here will be your trade history.
 
 - if can? :create, Trade
   = render 'import'

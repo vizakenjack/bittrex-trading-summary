@@ -1,4 +1,4 @@
-require 'rails_helper'
+require 'spec_helper'
 
 RSpec.describe "exchanges/edit", :type => :view do
   before(:each) do

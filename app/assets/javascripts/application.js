@@ -13,10 +13,12 @@
 //= require jquery
 //= require select2
 //= require jquery_ujs
-//= require jquery.ui.effect-highlight
-//= require jquery.ui.effect-shake
+//= require jquery-ui/effect-highlight
+//= require jquery-ui/effect-shake
 //= require turbolinks
 //= require twitter/bootstrap
+//= require editable/bootstrap-editable
+//= require editable/rails
 //= require_tree .
 
 function slide_row(object) {

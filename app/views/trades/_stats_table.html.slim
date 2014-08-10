@@ -1,0 +1,25 @@
+tr
+  td width="22%" Bought:
+  td width="28%" = price_format trade.amount_bought
+  td width="28%" = price_format trade.average_price_bought
+  td.text-cnt width="22%" = btc_format trade.price_bought
+tr
+  td Sold:
+  td = price_format trade.amount_sold
+  td = price_format trade.average_price_sold
+  td.text-cnt  = btc_format trade.price_sold
+- if trade.amount_left > 0
+  tr
+    td Left:
+    td = price_format trade.amount_left
+    td = price_format(trade.coin.current_price)
+    td.text-cnt  = btc_format(trade.amount_left * trade.coin.current_price)
+tr
+  td
+    - if trade.sold_more?
+      i class="glyphicon glyphicon-info-sign" rel="tooltip" data-toggle="tooltip" data-placement="top" title="Calculating amount of bought coins only"
+      = " Trade profit: "
+  td
+    = btc_format trade.actual_sold if trade.sold_more?
+  td Profit:
+  td.text-cnt = btc_format trade.profit

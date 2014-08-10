@@ -1,0 +1,7 @@
+tr
+  td colspan="4"
+    .round-select
+      span.caption Round: 
+      .btn-group 
+        = round_selector(@trade.rounds, @selected_round)
+= render "stats_table", trade: @round  if @round

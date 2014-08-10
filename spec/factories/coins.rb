@@ -2,10 +2,10 @@
 
 FactoryGirl.define do
   factory :coin do
-    name "MyString"
-    tag "MyString"
-    thread "MyString"
-    current_price 1.5
-    current_volume 1.5
+    name "AxroCoin"
+    tag "AXR"
+    thread "-"
+    current_price 0.01
+    current_volume 50
   end
 end

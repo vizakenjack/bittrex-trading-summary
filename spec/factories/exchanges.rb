@@ -2,8 +2,8 @@
 
 FactoryGirl.define do
   factory :exchange do
-    name "MyString"
-    short_name "MyString"
-    url "MyString"
+    name "Bittrex"
+    short_name "BTX"
+    url "bittrex.com"
   end
 end

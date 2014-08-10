@@ -10,11 +10,12 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
+ *= require fonts
  *= require custom_bootstrap/custom_bootstrap
  *= require font-awesome
  *= require select2
  *= require select2-bootstrap
+ *= require editable/bootstrap-editable
  *= require_tree .
  *= require_self
  */
- @import url(http://fonts.googleapis.com/css?family=Titillium+Web:600);

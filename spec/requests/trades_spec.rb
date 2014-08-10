@@ -1,10 +1,23 @@
-require 'rails_helper'
-
+require 'spec_helper'
 RSpec.describe "Trades", :type => :request do
-  describe "GET /trades" do
-    it "works! (now write some real specs)" do
+  let!(:user) { FactoryGirl.create(:user) }
+
+
+
+  def sign_in(user)
+    post_via_redirect user_session_path, 'user[username]' => user.username, 'user[password]' => user.password
+  end
+
+  before(:each) do
+    sign_in user
+  end
+
+  describe "GET index" do
+
+    it "should render index page" do
       get trades_path
-      expect(response.status).to be(200)
+      expect(response).to render_template("index")
+      expect(response).to have_http_status(200)
     end
   end
 end

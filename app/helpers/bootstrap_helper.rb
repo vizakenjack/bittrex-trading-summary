@@ -27,4 +27,8 @@ module BootstrapHelper
     end
     content_tag :i, nil, :class => names
   end
+
+  def xeditable? object = nil
+    true
+  end
 end

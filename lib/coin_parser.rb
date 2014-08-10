@@ -12,14 +12,14 @@ class CoinParser
       @trx = Bittrex.new(api.key, api.secret)
       # todo: fix exchanges
       coins = coins_to_array(@params[:orders_history][:coin_id])
-      coins_added_to_result(coins)
+      coins_to_result(coins)
     else
       coin = Coin.find(@params[:orders_history][:coin_id])
       @result = OrdersHistory.add_manual(@current_user.id, @params)
     end
   end
 
-  def coins_added_to_result(coins)
+  def coins_to_result(coins)
     names = coins.collect { |e| e[:name] }.join(", ")
 
     if coins.select{ |e| e[:status] == :success }.any?

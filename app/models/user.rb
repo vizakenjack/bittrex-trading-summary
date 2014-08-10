@@ -52,5 +52,11 @@ class User < ActiveRecord::Base
     end
   end
 
+  def refund_order(btc_amount, sell)
+    sell ? (self.btc_received -= btc_amount) : (self.btc_invested -= btc_amount)
+    self.trade_profit = btc_received - btc_invested
+    save!
+  end
+
 
 end

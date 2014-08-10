@@ -1,31 +1,51 @@
-.col-xs-12.pull-left
+.col-xs-12.pull-left.row
   = link_to trades_path(username: @orders_histories.first.user.username), :class => 'btn btn-default' do
     = glyph 'arrow-left'
     |  Back 
 br
 br
+
+ul.nav.nav-tabs
+  li.active: a href="#current" data-toggle="tab" Current round
+  li: a href="#total" data-toggle="tab" Total stats
+  li: a href="#round-settings" data-toggle="tab" Default round
+
+.tab-content
+  #current.tab-pane.active data-url=(trade_path(@trade))
+    table class="trade-stats-table table-tab-bordered"
+      = render 'round_table'
+  #total.tab-pane 
+    table class="trade-stats-table table-tab-bordered"
+      = render "stats_table", trade: @trade
+  #round-settings.tab-pane
+    p.well
+      | Current round (applies to new orders): 
+      = xeditable @trade, :current_round_number
+
+
+
 h1 = "Trade details of user #{@orders_histories.first.user.username}"
 .table-responsive
-  table.table.table-striped.table-bordered.table-hover
+  table#orders-histories-table.table.table-bordered
     thead
       tr
-        /th User
         th Coin
-        th Date
         th Exchange
+        th Round
         th Order type
+        th Date
         th Amount
         th Price
         th Total BTC
         th Manage
     tbody
       - @orders_histories.each do | orders_history |
-        tr
-          /td = orders_history.user.username
+        tr class=orders_history.order_type.downcase
           td = orders_history.coin.tag
-          td = orders_history.created_at.strftime("%d.%m.%y %H:%M:%S")
           td = orders_history.exchange.name
+          td = xeditable orders_history, :round_number
           td = orders_history.order_type
+          td = orders_history.created_at.strftime("%d.%m.%y %H:%M:%S")
           td = price_format orders_history.amount
           td = price_format orders_history.price
           td = price_format (orders_history.amount * orders_history.price)

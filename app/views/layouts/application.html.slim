@@ -1,5 +1,5 @@
 doctype html
-html lang="ru"
+html lang="en"
   head
     meta charset="utf-8"
     meta content="IE=edge" http-equiv="X-UA-Compatible"
@@ -13,6 +13,7 @@ html lang="ru"
       
     = csrf_meta_tags
     = favicon_link_tag 'favicon.ico', :rel => 'shortcut icon'
+    
   body
     .container
       .header
@@ -34,3 +35,4 @@ html lang="ru"
         = yield
       .footer
         p © Vizakenjack 2014
+    == render 'templates/analytics'

@@ -1,4 +1,4 @@
-require 'rails_helper'
+require 'spec_helper'
 
 RSpec.describe "Coins", :type => :request do
   describe "GET /coins" do

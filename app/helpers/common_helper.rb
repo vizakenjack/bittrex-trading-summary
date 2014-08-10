@@ -84,25 +84,23 @@ module CommonHelper
   end
 
 
-  def xeditable_old(object, field_text, options = {})
-    model_param = options[:model] ? options[:model] : object.class.to_s.downcase.gsub('::', '_')
-    data_url = options[:url] ? options[:url] : polymorphic_path(object)
-    if can? :edit, object
-      content_tag(:a, object[field_text], class: 'editable', href: '#', data: { type: options.fetch(:type, 'text'), name: field_text, 
-                  model: model_param, url: data_url})
-    else
-      object[field_text]
-    end
-  end
-
   def xeditable(object, field_text, options = {})
-    model_param = options.fetch(:model, object.class.to_s.downcase.gsub('::', '_'))
+    model_param = options.fetch(:model, object.class.to_s.underscore)
     data_url = options.fetch(:url, polymorphic_path(object))
     source = options.fetch(:source, nil)
     value_output = options.fetch(:display, object[field_text])
-    if can? :edit, object
-      content_tag(:a, value_output, class: 'editable', href: '#', data: { type: options.fetch(:type, 'text'), name: field_text, 
-                  model: model_param, url: data_url, source: source, value: (options[:value] || nil)})
+
+    if can? :edit, Round
+      content_tag(:a, 
+                  value_output, 
+                  class: 'editable round-editable label label-primary', 
+                  href: '#', 
+                  data: { type: options.fetch(:type, 'text'), 
+                  name: field_text, 
+                  model: model_param,
+                  url: data_url, 
+                  source: source,
+                  value: (options[:value] || nil)})
     else
       value_output
     end
