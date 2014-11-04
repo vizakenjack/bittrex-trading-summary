@@ -1,5 +1,6 @@
 class TradesController < ApplicationController
   include ActionView::Helpers::TextHelper
+  before_action :authenticate_user!
   before_action :set_trade, only: [:show, :edit, :update, :destroy]
   respond_to :html, :js
 
