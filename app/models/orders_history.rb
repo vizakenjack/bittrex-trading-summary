@@ -151,10 +151,8 @@ class OrdersHistory < ActiveRecord::Base
       end
       new_round = Round.where(user_id: self.user_id, coin_id: self.coin_id, round_number: new_round_number).first_or_initialize
       self.add_amount_and_save new_round
-      new_round.save! #check it
-
+      new_round.save!
       self.update_attribute :round_id, new_round.id
-
       self.trade.add_rounds(new_round_number)
     end
   end

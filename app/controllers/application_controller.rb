@@ -23,10 +23,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def console
-    1 / 0
-  end
-
   protected
 
   def trade_path_with_username(trade)

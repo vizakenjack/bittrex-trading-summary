@@ -13,6 +13,8 @@
 /public/assets
 
 /config/database.yml
+/config/newrelic.yml
+/config/secrets.yml
 /environments/development.rb
 
 # Ignore all logfiles and tempfiles.

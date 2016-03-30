@@ -48,15 +48,16 @@ class OrdersHistoriesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def orders_history_params
       params.require(:orders_history).permit(
-                                            :user_id, 
-                                            :coin_id, 
-                                            :exchange_id, 
-                                            :round_number,
-                                            :order_type, 
-                                            :amount, 
-                                            :price, 
-                                            :uuid, 
-                                            :btc_amount, 
-                                            :added_by)
+        :user_id, 
+        :coin_id, 
+        :exchange_id, 
+        :round_number,
+        :order_type, 
+        :amount, 
+        :price, 
+        :uuid, 
+        :btc_amount, 
+        :added_by
+      )
     end
 end
